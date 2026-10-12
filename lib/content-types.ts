@@ -7,6 +7,7 @@ export interface Program {
   part: string;
   calories: number;
   videoId: string;
+  videoUrl?: string;
   color?: string;
 }
 

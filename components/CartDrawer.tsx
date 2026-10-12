@@ -45,7 +45,17 @@ export function CartDrawer() {
             <label className="flex gap-3 text-xs text-white/60"><input name="marketingConsent" type="checkbox" className="accent-accent" />新着プログラムや商品のお知らせを受け取る</label>
             {status === "error" && <p role="alert" className="text-sm text-accent">保存できませんでした。設定を確認して再度お試しください。</p>}
             {status === "done" ? (
-              <div className="rounded-xl bg-emerald-500/10 p-5 text-center text-emerald-400"><CheckCircle2 className="mx-auto mb-2" />顧客情報を登録しました</div>
+              <div className="space-y-4 rounded-xl bg-emerald-500/10 p-5 text-center text-emerald-400">
+                <CheckCircle2 className="mx-auto mb-2" />顧客情報を登録しました
+                {items.some((item) => item.itemUrl) && (
+                  <div className="space-y-2 pt-2">
+                    <p className="text-xs text-white/55">決済はBASEの商品ページで行います。</p>
+                    {items.filter((item) => item.itemUrl).map((item) => (
+                      <a key={item.id} href={item.itemUrl} target="_blank" rel="noreferrer" className="block bg-white px-4 py-3 text-xs font-black text-ink">{item.name}をBASEで購入</a>
+                    ))}
+                  </div>
+                )}
+              </div>
             ) : (
               <button disabled={status === "saving"} className="flex w-full items-center justify-center gap-2 bg-accent py-4 font-black disabled:opacity-50">{status === "saving" ? "保存中…" : "顧客情報を登録"}<ArrowRight size={18} /></button>
             )}

@@ -13,5 +13,21 @@ async function getList<T>(endpoint: string): Promise<T[]> {
   return ((await response.json()) as MicroCMSListResponse<T>).contents;
 }
 
-export const getPrograms = () => getList<Program>("programs");
+function youtubeId(program: Program): string {
+  if (program.videoId) return program.videoId;
+  if (!program.videoUrl) return "";
+  try {
+    const url = new URL(program.videoUrl);
+    if (url.hostname === "youtu.be") return url.pathname.slice(1);
+    if (url.pathname.startsWith("/embed/")) return url.pathname.split("/")[2];
+    return url.searchParams.get("v") ?? "";
+  } catch {
+    return "";
+  }
+}
+
+export async function getPrograms() {
+  const programs = await getList<Program>("programs");
+  return programs.map((program) => ({ ...program, videoId: youtubeId(program) }));
+}
 export const getRecipes = () => getList<Recipe>("recipes");

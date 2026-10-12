@@ -1,8 +1,20 @@
 import { NextResponse } from "next/server";
-import { products } from "@/lib/products";
+import { getBaseProducts } from "@/lib/base";
+import { products as fallbackProducts } from "@/lib/products";
 
-// A zero-cost, same-origin catalog API. It can later be replaced with a
-// provider adapter without changing the storefront response shape.
-export function GET() {
-  return NextResponse.json({ products, currency: "JPY" });
+export async function GET() {
+  try {
+    return NextResponse.json({
+      products: await getBaseProducts(),
+      currency: "JPY",
+      source: "base",
+    });
+  } catch (error) {
+    console.warn("Using fallback products:", error);
+    return NextResponse.json({
+      products: fallbackProducts,
+      currency: "JPY",
+      source: "fallback",
+    });
+  }
 }
